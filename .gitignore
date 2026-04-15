@@ -1,0 +1,67 @@
+# =========================
+# GENERAL
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# NODE / FRONTEND (Vite + Vue)
+# =========================
+frontend/proc-roll/node_modules/
+frontend/proc-roll/dist/
+frontend/proc-roll/.vite/
+frontend/proc-roll/.env
+frontend/proc-roll/.env.*
+frontend/proc-roll/npm-debug.log*
+frontend/proc-roll/yarn-debug.log*
+frontend/proc-roll/yarn-error.log*
+frontend/proc-roll/pnpm-debug.log*
+
+# =========================
+# .NET BACKEND
+# =========================
+backend/proc-roll-api/bin/
+backend/proc-roll-api/obj/
+backend/proc-roll-api/.vs/
+backend/proc-roll-api/*.user
+backend/proc-roll-api/*.suo
+
+# =========================
+# VISUAL STUDIO / VS CODE
+# =========================
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# =========================
+# LOGS
+# =========================
+*.log
+
+# =========================
+# BUILD OUTPUTS
+# =========================
+dist/
+build/
+out/
+
+# =========================
+# PACKAGE LOCK (optional)
+# =========================
+# Keep this if working in team!
+# Otherwise uncomment to ignore
+# package-lock.json
+
+# =========================
+# ENV FILES
+# =========================
+.env
+.env.*
+
+# =========================
+# OS GENERATED FILES
+# =========================
+*.swp
+*.swo
