@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 
-export const currentLevel = ref(0);
+export const currentLevel = ref(1);
 export const gameState = ref(1);
 
 export function levelCompleted() {
@@ -12,5 +12,5 @@ export function playerDied() {
 }
 
 export function startNextLevel() {
-    
+
 }
