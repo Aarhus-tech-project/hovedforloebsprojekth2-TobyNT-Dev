@@ -1,7 +1,9 @@
 import * as THREE from 'three'
 import textureImg from '../assets/textures/floor-tiles.jpg'
 
-import { createPlayerCharacter, updatePlayerMove } from './player-character.js'
+import { createPlayerCharacter, updatePlayerMove } from './player.js'
+
+import { GenerateGoal } from './level-goal.js'
 
 const testTexture = new THREE.TextureLoader().load(textureImg)
 const testTextureMaterial = new THREE.MeshStandardMaterial({ map: testTexture })
@@ -34,13 +36,21 @@ function render3D(target) {
   target.innerHTML = ''
   target.appendChild(renderer.domElement)
 
-  const plane = new THREE.Mesh( new THREE.PlaneGeometry(10, 10), testTextureMaterial)
-  plane.rotation.x = -Math.PI / 2
-  scene.add(plane)
+  for (let i = 0; i < 11; i++) {
+      const plane = new THREE.Mesh( new THREE.PlaneGeometry(10, 10), testTextureMaterial)
+      plane.rotation.x = -Math.PI / 2
+      plane.position.z = i * 10;
+      scene.add(plane)
+  }
 
   const playerCharacter = createPlayerCharacter();
   playerCharacter.position.y = 2
   scene.add(playerCharacter)
+
+  const goal = new GenerateGoal();
+  goal.position.y = 50;
+  goal.position.z = 100;
+  scene.add(goal);
 
   camera.position.set(0, 6, 8)
   camera.lookAt(0, 0, 0)
