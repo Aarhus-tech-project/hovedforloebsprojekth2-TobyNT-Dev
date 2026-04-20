@@ -12,29 +12,61 @@ testballTexture.minFilter = THREE.NearestFilter
 testballTexture.repeat.set(4, 4)
 
 
-function createPlayerCharacter() { 
+function createPlayerCharacter() {
+    const transparentMaterial = new THREE.MeshBasicMaterial(false);
 
-    const sphere = new THREE.Mesh( new THREE.SphereGeometry(2, 16, 16), testballTextureMaterial)
-    
-    return sphere;
+    const visualSphere = new THREE.Mesh(new THREE.SphereGeometry(2, 16, 16), testballTextureMaterial);
+
+    const physSphere = new THREE.Mesh(new THREE.SphereGeometry(2, 16, 16), transparentMaterial)
+
+    physSphere.add(visualSphere);
+
+    return physSphere;
 }
 
 let velocity = new THREE.Vector3();
 
-function updatePlayerMove(playerPosition) {
-    let input = new THREE.Vector3();
+let playerYaw = 0;
 
-    if (userInputState.w) input.z += 0.01;
-    if (userInputState.s) input.z -= 0.01;
-    if (userInputState.a) input.x += 0.01;
-    if (userInputState.d) input.x -= 0.01;
+const BALL_RADIUS = 2;
 
-    if (input.lengthSq() > 0) input.normalize();
+function updatePlayerMove(playerPosition, playerMesh) {
 
-    const targetVelocity = input.multiplyScalar(0.1);
+    if (userInputState.a) playerYaw += 0.015;
+    if (userInputState.d) playerYaw -= 0.015;
 
-    velocity.lerp(targetVelocity, 0.1);
-    playerPosition.add(velocity);
+    playerMesh.rotation.y = playerYaw;
+
+    const forward = new THREE.Vector3(0, 0, -1);
+    forward.applyAxisAngle(new THREE.Vector3(0, 1, 0), playerYaw);
+
+    let inputStrength = 0;
+    if (userInputState.w) inputStrength += 1;
+    if (userInputState.s) inputStrength -= 1;
+
+    const targetVelocity = forward.multiplyScalar(inputStrength * 0.1);
+    velocity.lerp(targetVelocity, 0.01);
+
+    const deltaMove = velocity.clone();
+    playerPosition.add(deltaMove);
 }
+// function updatePlayerMove(playerPosition, playerMesh) {
+//     if (userInputState.a) playerYaw += 0.015;
+//     if (userInputState.d) playerYaw -= 0.015;
+//     // Don't rotate playerMesh — remove this line:
+//     // playerMesh.rotation.y = playerYaw;
+//     const forward = new THREE.Vector3(0, 0, -1);
+//     forward.applyAxisAngle(new THREE.Vector3(0, 1, 0), playerYaw);
+//     let inputStrength = 0;
+//     if (userInputState.w) inputStrength += 1;
+//     if (userInputState.s) inputStrength -= 1;
+//     const targetVelocity = forward.clone().multiplyScalar(inputStrength * 0.1);
+//     velocity.lerp(targetVelocity, 0.01);
+//     const deltaMove = velocity.clone();
+//     playerPosition.add(deltaMove);
+//     const visual = playerMesh.children[0];
+//     const distance = deltaMove.length();
+    
+// }
 
 export { createPlayerCharacter, updatePlayerMove };
