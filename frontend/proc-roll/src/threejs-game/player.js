@@ -57,4 +57,10 @@ function updatePlayerMove(playerPosition, playerMesh) {
         visualSphere.rotation.x += rotationAmount;
     }
 }
-export { createPlayerCharacter, updatePlayerMove };
+
+function resetPlayerState() {
+    velocity.set(0, 0, 0);
+    playerYaw = 0;
+}
+
+export { createPlayerCharacter, updatePlayerMove, resetPlayerState };

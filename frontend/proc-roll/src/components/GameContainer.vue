@@ -1,9 +1,13 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import render3D from '../threejs-game/main-scene-loader.js';
-import TransitionNextLevel from './TransitionNextLevel.vue';
+import LevelTransition from './LevelTransition.vue';
 
 const target = ref(null);
+
+function StartLevel() {
+  render3D(target.value);
+}
 
 onMounted(() => {
   render3D(target.value);
@@ -12,6 +16,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <TransitionNextLevel></TransitionNextLevel>
+  <LevelTransition></LevelTransition>
   <div ref="target"></div>
 </template>

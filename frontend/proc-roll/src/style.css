@@ -18,8 +18,8 @@ html, body, #app {
     color: rgb(255, 255, 255);
     position: absolute;
     font-weight: 800;
-    top: 1%;
-    left: 2%;
+    top: 0px;
+    left: 40px;
   }
 }
 #game-container {
@@ -64,4 +64,172 @@ html, body, #app {
 .fade-enter-to,
 .fade-leave-from {
   opacity: 1;
+}
+
+/* =========================
+   THEME VARIABLES
+========================= */
+:root {
+  --bg: #0f1115;
+  --panel: #171a21;
+  --panel-2: #1f2430;
+
+  --text: #e6e6e6;
+  --muted: #a0a0a0;
+
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+
+  --border: #2a2f3a;
+  --error: #ef4444;
+
+  --shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+/* =========================
+   LOGIN MODAL
+========================= */
+.login-container {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+}
+
+.login-card {
+  background: var(--panel);
+  padding: 2rem;
+  border-radius: 12px;
+
+  width: 320px;
+
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.login-title {
+  margin-bottom: 1.5rem;
+  text-align: center;
+
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* =========================
+   FORM
+========================= */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.4rem;
+
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.login-cancel {
+  border: none;
+  background-color: #ffffff00;
+  display: block;
+  margin-bottom: 0.4rem;
+  margin-top: 0.4rem;
+
+  font-size: 0.9rem;
+  color: var(--muted);
+  text-align: center;
+  width: 100%;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.6rem;
+
+  border-radius: 8px;
+  border: 1px solid var(--border);
+
+  background: var(--panel-2);
+  color: var(--text);
+
+  font-size: 0.95rem;
+
+  transition: border 0.2s, background 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: #222838;
+}
+
+/* =========================
+   ERROR
+========================= */
+.form-error {
+  color: var(--error);
+  font-size: 0.85rem;
+  margin-bottom: 0.8rem;
+}
+
+/* =========================
+   BUTTON
+========================= */
+.login-button {
+  width: 100%;
+  padding: 0.7rem;
+
+  background: var(--accent);
+  color: white;
+
+  border: none;
+  border-radius: 8px;
+
+  font-weight: 500;
+  cursor: pointer;
+
+  transition: background 0.2s, transform 0.05s;
+}
+
+.login-button:hover {
+  background: var(--accent-hover);
+}
+
+.login-button:active {
+  transform: scale(0.98);
+}
+
+.login-button:disabled {
+  background: #3b3f4a;
+  cursor: not-allowed;
+}
+
+.login-form-toggle {
+  position: absolute;
+  right: 40px;
+  top: 20px;
+  width: 100px;
+  height: 40px;
+  padding: 0.7rem;
+
+  background: var(--accent);
+  color: white;
+
+  border: none;
+  border-radius: 8px;
+
+  font-weight: 500;
+  cursor: pointer;
+
+  transition: background 0.2s, transform 0.05s;
+}
+.login-form-toggle:hover {
+  background: var(--accent-hover);
 }
