@@ -65,3 +65,9 @@ out/
 # =========================
 *.swp
 *.swo
+
+# =========================
+# CONNECTIONSTRING HIDDEN
+# =========================
+/backend/proc-roll-api/appsettings.Secrets.json
+/backend/proc-roll-api/*.Secrets.json

@@ -2,6 +2,7 @@
 using proc_roll_api.DTOs;
 using proc_roll_api.Models;
 using proc_roll_api.Services;
+using System;
 
 namespace proc_roll_api.Controllers
 {
@@ -24,6 +25,20 @@ namespace proc_roll_api.Controllers
         [HttpPost]
         public IActionResult Create(CreateUserDto dto)
         {
+            if (dto == null ||
+                string.IsNullOrWhiteSpace(dto.Username) ||
+                string.IsNullOrWhiteSpace(dto.Email) ||
+                string.IsNullOrWhiteSpace(dto.Password))
+            {
+                return BadRequest("Missing required fields");
+            }
+
+            if (UserService.EmailExists(dto.Email))
+                return Conflict("Email already in use");
+
+            if (UserService.UsernameExists(dto.Username))
+                return Conflict("Username already in use");
+
             var newUser = new User
             {
                 UserId = Guid.NewGuid(),
@@ -34,7 +49,9 @@ namespace proc_roll_api.Controllers
                 Highscore = 0
             };
 
-            UserService.Add(newUser);
+            var added = UserService.Add(newUser);
+            if (!added)
+                return Conflict("Email or username already in use");
 
             return CreatedAtAction(nameof(Get), new { id = newUser.UserId }, newUser);
         }

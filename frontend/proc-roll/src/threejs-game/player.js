@@ -41,8 +41,8 @@ function updatePlayerMove(playerPosition, playerMesh) {
     forward.applyAxisAngle(new THREE.Vector3(0, 1, 0), playerYaw);
     //Throttle / reverse
     let inputStrength = 0;
-    if (userInputState.w) inputStrength += 1;
-    if (userInputState.s) inputStrength -= 1;
+    if (userInputState.w) inputStrength -= 1;
+    if (userInputState.s) inputStrength += 1;
 
     const targetVelocity = forward.multiplyScalar(inputStrength * 0.1);
     velocity.lerp(targetVelocity, 0.01);

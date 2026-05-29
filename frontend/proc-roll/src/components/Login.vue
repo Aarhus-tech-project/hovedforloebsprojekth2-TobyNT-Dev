@@ -25,8 +25,8 @@ const handleSubmit = async () => {
 
     try {
         const endpoint = isRegister.value
-            ? 'https://your-api.com/register'
-            : 'https://your-api.com/login'
+            ? 'http://localhost:5263/api/User'
+            : 'http://localhost:5263/api/User/login'
 
         const body = isRegister.value
             ? {
@@ -53,7 +53,6 @@ const handleSubmit = async () => {
             throw new Error(data.message || 'Request failed')
         }
 
-        // optional: only store token on login
         if (!isRegister.value) {
             localStorage.setItem('token', data.token)
         }

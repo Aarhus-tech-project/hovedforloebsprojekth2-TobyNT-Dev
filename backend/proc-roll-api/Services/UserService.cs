@@ -1,5 +1,7 @@
 ﻿using proc_roll_api.Models;
-using System.Xml.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace proc_roll_api.Services
 {
@@ -12,9 +14,30 @@ namespace proc_roll_api.Services
 
         public static User? Get(Guid id) => Users.FirstOrDefault(u => u.UserId == id);
 
-        public static void Add(User user)
+        public static User? GetByEmail(string email) =>
+            string.IsNullOrWhiteSpace(email) ? null :
+            Users.FirstOrDefault(u => u.Email != null && u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+
+        public static User? GetByUsername(string username) =>
+            string.IsNullOrWhiteSpace(username) ? null :
+            Users.FirstOrDefault(u => u.Username != null && u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+
+        public static bool EmailExists(string email) =>
+            !string.IsNullOrWhiteSpace(email) && Users.Any(u => u.Email != null && u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+
+        public static bool UsernameExists(string username) =>
+            !string.IsNullOrWhiteSpace(username) && Users.Any(u => u.Username != null && u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+
+        // Returns true on success, false if email/username already exists
+        public static bool Add(User user)
         {
+            if (user == null) return false;
+
+            if (EmailExists(user.Email) || UsernameExists(user.Username))
+                return false;
+
             Users.Add(user);
+            return true;
         }
 
         public static void Delete(Guid id)

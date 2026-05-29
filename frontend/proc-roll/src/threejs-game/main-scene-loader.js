@@ -3,7 +3,7 @@ import textureImg from '../assets/textures/floor-tiles.jpg'
 
 import { createPlayerCharacter, updatePlayerMove, resetPlayerState } from './player.js'
 import { generateGoal } from './level-goal.js'
-import { playerDied, levelCompleted, gameState } from './game-states.js'
+import { playerDied, levelCompleted, gameState, currentLevel } from './game-states.js'
 
 const testTexture = new THREE.TextureLoader().load(textureImg)
 testTexture.wrapS = THREE.RepeatWrapping
@@ -41,21 +41,23 @@ function disposeObject(obj) {
 
 function generateLevel(scene, playerCharacter) {
 
-    for (let i = 0; i < 11; i++) {
-        const plane = new THREE.Mesh( new THREE.PlaneGeometry(10, 10), testTextureMaterial);
+    for (let i = 0; i < PLATFORM_COUNT; i++) {
+        const plane = new THREE.Mesh( new THREE.PlaneGeometry(PLATFORM_SIZE, PLATFORM_SIZE), testTextureMaterial);
 
         plane.rotation.x = -Math.PI / 2;
-        plane.position.z = i * 10;
+        plane.position.z = i * PLATFORM_SIZE;
 
         scene.add(plane);
         platforms.push(plane);
+
+        if (i == PLATFORM_COUNT - 1) {
+            goal = generateGoal();
+            goal.position.y = plane.position.y;
+            goal.position.z = plane.position.z;
+
+            scene.add(goal);
+        }
     }
-
-    goal = generateGoal();
-    goal.position.y = 50;
-    goal.position.z = 100;
-
-    scene.add(goal);
 }
 
 function cleanupLevel(scene) {
@@ -122,7 +124,7 @@ function render3D(target) {
 
     camera.position.set(0, 5, 10);
 
-    const cameraOffset = new THREE.Vector3(0, 5, 10);
+    const cameraOffset = new THREE.Vector3(0, 5, -10);
 
     function updateCamera() {
         const offset = cameraOffset.clone();

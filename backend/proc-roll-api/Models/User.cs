@@ -8,5 +8,6 @@
         public string Email { get; set; }
         public int Balance { get; set; }
         public int Highscore { get; set; }
+        public ICollection<Cosmetic> Cosmetics { get; set; } = new List<Cosmetic>();
     }
 }
