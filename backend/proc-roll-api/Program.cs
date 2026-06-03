@@ -4,14 +4,28 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 // Load optional local secrets file (not checked into source control)
 builder.Configuration.AddJsonFile("appsettings.Secrets.json", optional: true, reloadOnChange: true);
 
 // Add services
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddControllers();
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendOnly", policy =>
+    {
+        policy
+            .WithOrigins("http://www.gr08.prog.skylab.academy")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 // Configure EF Core DbContext
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
                        ?? "Server=(localdb)\\mssqllocaldb;Database=ProcRollDb;Trusted_Connection=True;MultipleActiveResultSets=true";
@@ -47,8 +61,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization(); // optional for now, but fine to keep
-
+app.UseCors("FrontendOnly");
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
+
 
 app.Run();
