@@ -7,6 +7,8 @@ html, body, #app {
     font-family: sans-serif;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    text-transform: uppercase;
+    font-weight: 100;
 }
 
 #main-container {
@@ -17,7 +19,6 @@ html, body, #app {
     text-align: center;
     color: rgb(255, 255, 255);
     position: absolute;
-    font-weight: 800;
     top: 0px;
     left: 40px;
   }
@@ -37,13 +38,14 @@ html, body, #app {
 
 .fullscreen-cover {
   position: absolute;
-  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.308);
   width: 100%;
   height: 100%;
 
   color: white;
   justify-content: center;
   padding: 300px;
+  backdrop-filter: blur(12px);
 }
 
 .fullscreen-cover.visible {
@@ -70,20 +72,19 @@ html, body, #app {
    THEME VARIABLES
 ========================= */
 :root {
-  --bg: #0f1115;
-  --panel: #171a21;
-  --panel-2: #1f2430;
+  --bg: #15162A;
+  --panel: #0B0B15;
 
   --text: #e6e6e6;
   --muted: #a0a0a0;
 
-  --accent: #6366f1;
-  --accent-hover: #4f46e5;
+  --accent: #7074E0;
+  --accent-hover: #5457A8;
 
-  --border: #2a2f3a;
-  --error: #ef4444;
+  --border: #9497E8;
+  --error: #A32333;
 
-  --shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  --shadow: 0 0 30px #7074e0d6;
 }
 /* =========================
    LOGIN MODAL
@@ -115,7 +116,6 @@ html, body, #app {
   margin-bottom: 1.5rem;
   text-align: center;
 
-  font-weight: 600;
   color: var(--text);
 }
 
@@ -136,7 +136,7 @@ html, body, #app {
 
 .login-cancel, .login-register {
   border: none;
-  background-color: #ffffff00;
+  background-color: transparent;
   margin-top: 1rem;
   font-size: 0.9rem;
   color: var(--muted);
@@ -165,7 +165,7 @@ html, body, #app {
 .form-input:focus {
   outline: none;
   border-color: var(--accent);
-  background: #222838;
+  background: var(--bg);
 }
 
 /* =========================
@@ -190,7 +190,6 @@ html, body, #app {
   border: none;
   border-radius: 8px;
 
-  font-weight: 500;
   cursor: pointer;
 }
 
@@ -221,11 +220,31 @@ html, body, #app {
   border: none;
   border-radius: 8px;
 
-  font-weight: 500;
   cursor: pointer;
 
   transition: background 0.2s, transform 0.05s;
 }
 .login-form-toggle:hover {
   background: var(--accent-hover);
+}
+
+.nextButton {
+  width: 180px;
+  padding: 0.7rem;
+
+  background: transparent;
+  color: var(--accent);
+  margin-top: 20px;
+  border: solid var(--accent) 1px;
+  border-radius: 8px;
+
+  cursor: pointer;
+  box-shadow: var(--accent) 0px 0px 0px;
+  transition: 400ms;
+  &:hover {
+    box-shadow: var(--shadow);
+    text-shadow: var(--accent) 0px 0px 10px;
+    color: white;
+    border-color: white;
+  }
 }

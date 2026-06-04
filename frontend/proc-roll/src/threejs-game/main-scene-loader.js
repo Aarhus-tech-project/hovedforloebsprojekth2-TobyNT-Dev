@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import textureImg from '../assets/textures/floor-tiles.jpg'
+import textureImg from '../assets/textures/test-texture2.png'
 
 import { createPlayerCharacter, updatePlayerMove, resetPlayerState } from './player.js'
 import { generateGoal } from './level-goal.js'
@@ -12,7 +12,7 @@ testTexture.magFilter = THREE.NearestFilter
 testTexture.minFilter = THREE.NearestFilter
 testTexture.repeat.set(4, 4)
 
-const testTextureMaterial = new THREE.MeshStandardMaterial({ map: testTexture })
+const platformMaterial = new THREE.MeshStandardMaterial({ map: testTexture })
 
 let playerOnGround = false;
 let animationId;
@@ -42,7 +42,7 @@ function disposeObject(obj) {
 function generateLevel(scene, playerCharacter) {
 
     for (let i = 0; i < PLATFORM_COUNT; i++) {
-        const plane = new THREE.Mesh( new THREE.PlaneGeometry(PLATFORM_SIZE, PLATFORM_SIZE), testTextureMaterial);
+        const plane = new THREE.Mesh( new THREE.PlaneGeometry(PLATFORM_SIZE, PLATFORM_SIZE), platformMaterial);
 
         plane.rotation.x = -Math.PI / 2;
         plane.position.z = i * PLATFORM_SIZE;
@@ -75,6 +75,17 @@ function cleanupLevel(scene) {
         goal = null;
     }
 }
+
+const star1mat = new THREE.PointsMaterial( {color: 0xffffff})
+const star1 = new THREE.Mesh( new THREE.SphereGeometry(70, 64, 64), star1mat );
+
+
+const star2 = THREE.CircleGeometry;
+star2.material = new THREE.PointsMaterial( {color: 0xffffff})
+const star3 = THREE.CircleGeometry;
+star3.material = new THREE.PointsMaterial( {color: 0xffffff})
+const star4 = THREE.CircleGeometry;
+star4.material = new THREE.PointsMaterial( {color: 0xffffff})
 
 function resetPlayer(playerCharacter) {
     playerCharacter.position.set(0, 2, 0);
@@ -113,7 +124,7 @@ function render3D(target) {
     directionalLight.position.set(5, 5, 5);
     scene.add(directionalLight);
 
-    const ambientLight = new THREE.AmbientLight(0x404040);
+    const ambientLight = new THREE.AmbientLight(0xffffffff);
     scene.add(ambientLight);
 
     const playerCharacter = createPlayerCharacter();
@@ -200,7 +211,7 @@ function render3D(target) {
         scene.traverse(obj => disposeObject(obj));
 
         testTexture.dispose();
-        testTextureMaterial.dispose();
+        platformMaterial.dispose();
 
         renderer.dispose();
         renderer.domElement.remove();

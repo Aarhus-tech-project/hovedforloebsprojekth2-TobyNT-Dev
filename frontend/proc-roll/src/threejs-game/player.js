@@ -1,15 +1,15 @@
 import * as THREE from 'three';
 
-import ballTextureImg from '../assets/textures/test-texture.png'
+import ballTextureImg from '../assets/textures/ball-texture.png'
 import userInputState from './input-states.js'
 
 const testballTexture = new THREE.TextureLoader().load(ballTextureImg)
 const testballTextureMaterial = new THREE.MeshStandardMaterial({ map: testballTexture })
-testballTexture.wrapS = THREE.RepeatWrapping
-testballTexture.wrapT = THREE.RepeatWrapping
+testballTexture.wrapS = THREE.ClampToEdgeWrapping
+testballTexture.wrapT = THREE.ClampToEdgeWrapping
 testballTexture.magFilter = THREE.NearestFilter
 testballTexture.minFilter = THREE.NearestFilter
-testballTexture.repeat.set(4, 4)
+testballTexture.repeat.set(2, 2)
 
 const ballRadius = 2;
 
@@ -18,11 +18,9 @@ let playerYaw = 0;
 
 
 function createPlayerCharacter() {
-    const transparentMaterial = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 });
+    const visualSphere = new THREE.Mesh( new THREE.SphereGeometry(ballRadius, 64, 64), testballTextureMaterial );
 
-    const visualSphere = new THREE.Mesh( new THREE.SphereGeometry(ballRadius, 16, 16), testballTextureMaterial );
-
-    const physSphere = new THREE.Mesh( new THREE.SphereGeometry(ballRadius, 16, 16), transparentMaterial );
+    const physSphere = new THREE.Mesh( new THREE.SphereGeometry(ballRadius, 64, 64), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 }));
 
     physSphere.add(visualSphere);
 
