@@ -1,9 +1,14 @@
 import * as THREE from 'three'
 import textureImg from '../assets/textures/test-texture2.png'
-
+// fx
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+// references
 import { createPlayerCharacter, updatePlayerMove, resetPlayerState } from './player.js'
 import { generateGoal } from './level-goal.js'
 import { playerDied, levelCompleted, gameState, currentLevel } from './game-states.js'
+import { generateStars } from './star-generation.js'
 
 const testTexture = new THREE.TextureLoader().load(textureImg)
 testTexture.wrapS = THREE.RepeatWrapping
@@ -42,7 +47,7 @@ function disposeObject(obj) {
 function generateLevel(scene, playerCharacter) {
 
     for (let i = 0; i < PLATFORM_COUNT; i++) {
-        const plane = new THREE.Mesh( new THREE.PlaneGeometry(PLATFORM_SIZE, PLATFORM_SIZE), platformMaterial);
+        const plane = new THREE.Mesh(new THREE.PlaneGeometry(PLATFORM_SIZE, PLATFORM_SIZE), platformMaterial);
 
         plane.rotation.x = -Math.PI / 2;
         plane.position.z = i * PLATFORM_SIZE;
@@ -76,16 +81,17 @@ function cleanupLevel(scene) {
     }
 }
 
-const star1mat = new THREE.PointsMaterial( {color: 0xffffff})
-const star1 = new THREE.Mesh( new THREE.SphereGeometry(70, 64, 64), star1mat );
+const star1mat = new THREE.PointsMaterial({ color: 0xffffff })
+const star1 = new THREE.Mesh(new THREE.SphereGeometry(70, 64, 64), star1mat);
+const star2mat = new THREE.PointsMaterial({ color: 0xffffff })
+const star2 = new THREE.Mesh(new THREE.SphereGeometry(70, 64, 64), star2mat);
+const star3mat = new THREE.PointsMaterial({ color: 0xffffff })
+const star3 = new THREE.Mesh(new THREE.SphereGeometry(70, 64, 64), star3mat);
+const star4mat = new THREE.PointsMaterial({ color: 0xffffff })
+const star4 = new THREE.Mesh(new THREE.SphereGeometry(70, 64, 64), star4mat);
 
 
-const star2 = THREE.CircleGeometry;
-star2.material = new THREE.PointsMaterial( {color: 0xffffff})
-const star3 = THREE.CircleGeometry;
-star3.material = new THREE.PointsMaterial( {color: 0xffffff})
-const star4 = THREE.CircleGeometry;
-star4.material = new THREE.PointsMaterial( {color: 0xffffff})
+
 
 function resetPlayer(playerCharacter) {
     playerCharacter.position.set(0, 2, 0);
@@ -108,14 +114,32 @@ function render3D(target) {
     const scene = new THREE.Scene();
 
     const camera = new THREE.PerspectiveCamera(
-        75,
+        90,
         window.innerWidth / window.innerHeight,
         0.1,
-        1000
+        2000
     );
+
+    scene.add(generateStars(1500, 64, 64))
+    scene.add(generateStars(1200, 48, 48))
+    scene.add(generateStars(1050, 32, 32))
 
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
+
+    // Bloom effect
+    const composer = new EffectComposer(renderer);
+    composer.addPass(
+        new RenderPass(scene, camera)
+    );
+    const bloomPass = new UnrealBloomPass(
+        new THREE.Vector2(window.innerWidth, window.innerHeight),
+        30.5, // strength
+        1.4, // radius
+        0.85 // threshold
+    );
+    composer.addPass(bloomPass);
+    // -
 
     target.innerHTML = '';
     target.appendChild(renderer.domElement);
@@ -174,9 +198,10 @@ function render3D(target) {
 
         playerCharacter.position.y += velocityY;
 
-        if (playerCharacter.position.y < -50) {
+        if (playerCharacter.position.y < -2000) {
             console.log("Level Failed...");
             playerDied();
+
 
             cleanupLevel(scene);
             resetPlayer(playerCharacter);
