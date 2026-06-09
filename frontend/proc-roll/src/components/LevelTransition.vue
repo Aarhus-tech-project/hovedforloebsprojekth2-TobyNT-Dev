@@ -9,8 +9,8 @@ import StartLevel from './GameContainer.vue'
         <div v-if="gameState != 1" class="fullscreen-cover">
               <h2 v-if="gameState == 2">Level {{ currentLevel - 1 }} Completed!</h2>
               <button class="nextButton" v-if="gameState == 2" v-on:click="StartLevel; gameState = 1" >Next Level</button>
-              <h2 v-if="gameState == 0">You failed... <br> you completed {{currentLevel - 1}} levels!</h2>
-              <h2 v-if="gameState == 3">Welcome to Proc Roll!</h2>
+              <h2 v-if="gameState == 0">You <span class="blink secondary">failed</span><br> you completed {{currentLevel - 1}} levels!</h2>
+              <h2 v-if="gameState == 3"><span class="secondary">$</span> welcome to the <span class="logo">void_</span></h2>
               <button class="nextButton" v-if="gameState == 3" v-on:click="StartLevel; gameState = 1" >Start Game!</button>
         </div>
     </transition>

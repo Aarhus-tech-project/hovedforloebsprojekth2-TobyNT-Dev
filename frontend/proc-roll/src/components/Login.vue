@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['toggle-login'])
 
 const isRegister = ref(false)
 
@@ -104,16 +104,18 @@ const toggleMode = () => {
             </div>
 
             <p v-if="error" class="form-error">{{ error }}</p>
-
+            
             <button class="login-button" :disabled="loading">{{ loading ? (isRegister ? 'Registering...' : 'Logging in...') : (isRegister ? 'Register' : 'Log in') }}</button>
-
-            <button class="login-cancel" type="button" @click="emit('close')">
-                Cancel
-            </button>
-
-            <button class="login-register" type="button" @click="toggleMode">
-                {{ isRegister ? 'Back to Login' : 'Register' }}
-            </button>
+            
+            <div class="alt-login-choices">
+                <button class="login-cancel" type="button" @click="emit('close')">
+                    Cancel
+                </button>
+    
+                <button class="login-register" type="button" @click="toggleMode">
+                    {{ isRegister ? 'Back to Login' : 'Register' }}
+                </button>
+            </div>
         </form>
     </div>
 </template>

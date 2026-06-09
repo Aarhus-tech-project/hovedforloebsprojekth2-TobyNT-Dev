@@ -4,24 +4,14 @@ html, body, #app {
     display: flex;
     width: 100%;
     height: 100vh;
-    font-family: sans-serif;
+    font-family: consolas;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
-    text-transform: uppercase;
     font-weight: 100;
 }
 
 #main-container {
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  h1 {
-    text-align: center;
-    color: rgb(255, 255, 255);
-    position: absolute;
-    top: 0px;
-    left: 40px;
-  }
+  
 }
 #game-container {
     display: flex;
@@ -29,8 +19,12 @@ html, body, #app {
     justify-content: center;
     width: 100%;
     height: 100%;
-    background-color: rgb(69, 91, 83);
 }
+
+h2 {
+  font-size: 1.8em;
+}
+
 #threejs-canvas {
     width: 100%;
     height: 100%;
@@ -68,6 +62,45 @@ html, body, #app {
   opacity: 1;
 }
 
+.logo {
+  color: var(--accent);
+  text-shadow: var(--accent) 0px 0px 15px;
+}
+.secondary {
+  color: var(--secondary-accent);
+  text-shadow: var(--secondary-accent) 0px 0px 15px;
+}
+.blink {
+  animation: blink 1s infinite linear;
+}
+
+@keyframes blink {
+  0% {opacity: 100%;}
+  49.9% {opacity: 100%;}
+  50% {opacity: 0%;}
+  100% {opacity: 0%;}
+}
+/* =====================
+NAV BAR
+====================== */
+.navbar {
+  z-index: 200;
+  justify-content: space-between;
+  padding: 0 12rem 0 12rem;
+  display: flex;
+  align-items: center;
+  background-color: var(--bg);
+}
+.nav-right-side {
+}
+
+h1 {
+    font-size: 2.5rem;
+    color: var(--accent);
+    margin: 0;
+    padding: 0;
+}
+
 /* =========================
    THEME VARIABLES
 ========================= */
@@ -81,6 +114,9 @@ html, body, #app {
   --accent: #7074E0;
   --accent-hover: #5457A8;
 
+  --secondary-accent: #D92E44;
+  --secondary-accent-hover: #A32333;
+
   --border: #9497E8;
   --error: #A32333;
 
@@ -90,6 +126,7 @@ html, body, #app {
    LOGIN MODAL
 ========================= */
 .login-container {
+  z-index: 100;
   position: fixed;
   inset: 0;
 
@@ -127,37 +164,39 @@ html, body, #app {
 }
 
 .form-label {
+  width: 100%;
   display: block;
   margin-bottom: 0.4rem;
 
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   color: var(--muted);
 }
 
+.alt-login-choices {
+  display: flex;
+  justify-content: space-around;
+}
+
 .login-cancel, .login-register {
-  border: none;
-  background-color: transparent;
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  color: var(--muted);
-  text-align: center;
-  margin-left: 20%;
-  width: 20%;
-  text-decoration: underline;
-  cursor: pointer;
+    background-color: transparent;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--muted);
+    text-align: center;
+    cursor: pointer;
+    border-color: var(--muted);
 }
 
 .form-input {
   width: 94%;
   padding: 0.6rem;
 
-  border-radius: 8px;
   border: 1px solid var(--border);
 
   background: var(--panel-2);
   color: var(--text);
 
-  font-size: 0.95rem;
+  font-size: 1.2rem;
 
   transition: border 0.2s, background 0.2s;
 }
@@ -182,19 +221,6 @@ html, body, #app {
 ========================= */
 .login-button {
   width: 100%;
-  padding: 0.7rem;
-
-  background: var(--accent);
-  color: white;
-  margin-top: 20px;
-  border: none;
-  border-radius: 8px;
-
-  cursor: pointer;
-}
-
-.login-button:hover {
-  background: var(--accent-hover);
 }
 
 .login-button:active {
@@ -206,37 +232,17 @@ html, body, #app {
   cursor: not-allowed;
 }
 
-.login-form-toggle {
-  position: absolute;
-  right: 40px;
-  top: 20px;
-  width: 100px;
-  height: 40px;
-  padding: 0.7rem;
 
-  background: var(--accent);
-  color: white;
-
-  border: none;
-  border-radius: 8px;
-
-  cursor: pointer;
-
-  transition: background 0.2s, transform 0.05s;
-}
-.login-form-toggle:hover {
-  background: var(--accent-hover);
-}
-
-.nextButton {
+button {
+  font-family: consolas;
+  font-size: 1rem;
   width: 180px;
   padding: 0.7rem;
 
   background: transparent;
   color: var(--accent);
-  margin-top: 20px;
+  margin: 20px 0 20px 0;
   border: solid var(--accent) 1px;
-  border-radius: 8px;
 
   cursor: pointer;
   box-shadow: var(--accent) 0px 0px 0px;
