@@ -8,6 +8,12 @@ export function levelCompleted() {
     currentLevel.value++;
 }
 
+export function newGame() {
+    gameState.value = 3;
+
+    currentLevel.value = 1;
+}
+
 export function playerDied() {
     gameState.value = 0;
 }

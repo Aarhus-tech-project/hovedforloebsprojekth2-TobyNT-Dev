@@ -3,7 +3,7 @@
 </script>
 
 <template>
-    <div>
+    <section class="shop-window">
         <h3>Shop</h3>
-    </div>
+    </section>
 </template>

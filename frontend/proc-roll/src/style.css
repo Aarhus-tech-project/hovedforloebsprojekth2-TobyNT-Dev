@@ -8,6 +8,7 @@ html, body, #app {
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
     font-weight: 100;
+    overflow: hidden;
 }
 
 #main-container {
@@ -41,7 +42,19 @@ h2 {
   padding: 300px;
   backdrop-filter: blur(12px);
 }
+.score-counter-box {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+}
 
+.score-counter {
+  font-size: 2rem;
+  width: 100%;
+  text-align: center;
+}
 .fullscreen-cover.visible {
   opacity: 1;
   pointer-events: auto;
@@ -62,7 +75,7 @@ h2 {
   opacity: 1;
 }
 
-.logo {
+.primary {
   color: var(--accent);
   text-shadow: var(--accent) 0px 0px 15px;
 }

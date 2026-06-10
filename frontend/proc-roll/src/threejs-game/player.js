@@ -1,15 +1,16 @@
 import * as THREE from 'three';
 
-import ballTextureImg from '../assets/textures/ball-texture.png'
+import ballTextureImg from '../assets/textures/test-texture-ball.png'
 import userInputState from './input-states.js'
 
 const testballTexture = new THREE.TextureLoader().load(ballTextureImg)
 const testballTextureMaterial = new THREE.MeshStandardMaterial({ map: testballTexture })
-testballTexture.wrapS = THREE.ClampToEdgeWrapping
-testballTexture.wrapT = THREE.ClampToEdgeWrapping
+testballTexture.wrapS = THREE.RepeatWrapping
+testballTexture.wrapT = THREE.RepeatWrapping
 testballTexture.magFilter = THREE.NearestFilter
 testballTexture.minFilter = THREE.NearestFilter
-testballTexture.repeat.set(2, 2)
+testballTexture.repeat.set(3, 2)
+testballTexture.colorSpace = THREE.SRGBColorSpace
 
 const ballRadius = 2;
 

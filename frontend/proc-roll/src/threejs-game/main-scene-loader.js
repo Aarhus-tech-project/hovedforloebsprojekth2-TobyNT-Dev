@@ -9,13 +9,15 @@ import { createPlayerCharacter, updatePlayerMove, resetPlayerState } from './pla
 import { generateGoal } from './level-goal.js'
 import { playerDied, levelCompleted, gameState, currentLevel } from './game-states.js'
 import { generateStars } from './star-generation.js'
+import { generateCoin } from './coin.js'
 
 const testTexture = new THREE.TextureLoader().load(textureImg)
 testTexture.wrapS = THREE.RepeatWrapping
 testTexture.wrapT = THREE.RepeatWrapping
 testTexture.magFilter = THREE.NearestFilter
 testTexture.minFilter = THREE.NearestFilter
-testTexture.repeat.set(4, 4)
+testTexture.repeat.set(2, 2)
+testTexture.colorSpace = THREE.SRGBColorSpace
 
 const platformMaterial = new THREE.MeshStandardMaterial({ map: testTexture })
 
@@ -23,10 +25,13 @@ let playerOnGround = false;
 let animationId;
 
 let platforms = [];
+let coins = [];
 let goal = null;
 
-const PLATFORM_COUNT = 11;
+const STARTING_PLATFORM_COUNT = 8;
 const PLATFORM_SIZE = 10;
+
+let PLATFORM_COUNT;
 
 const raycaster = new THREE.Raycaster();
 const down = new THREE.Vector3(0, -1, 0);
@@ -45,7 +50,7 @@ function disposeObject(obj) {
 }
 
 function generateLevel(scene, playerCharacter) {
-
+    PLATFORM_COUNT = STARTING_PLATFORM_COUNT + currentLevel.value;
     for (let i = 0; i < PLATFORM_COUNT; i++) {
         const plane = new THREE.Mesh(new THREE.PlaneGeometry(PLATFORM_SIZE, PLATFORM_SIZE), platformMaterial);
 
@@ -57,10 +62,19 @@ function generateLevel(scene, playerCharacter) {
 
         if (i == PLATFORM_COUNT - 1) {
             goal = generateGoal();
-            goal.position.y = plane.position.y;
+            goal.position.y = plane.position.y + 60;
             goal.position.z = plane.position.z;
 
             scene.add(goal);
+        } else if (Math.floor(Math.random() * 11) > 8 && i > 2) {
+            const coin = generateCoin();
+            coin.rotation.x = -Math.PI / 2;
+            coin.position.x = plane.position.x;
+            coin.position.z = plane.position.z;
+            coin.position.y = plane.position.y + 3;
+
+            scene.add(coin)
+            coins.push(coin)
         }
     }
 }
@@ -74,24 +88,18 @@ function cleanupLevel(scene) {
     });
     platforms = [];
 
+    coins.forEach(p => {
+        scene.remove(p);
+        disposeObject(p);
+    });
+    coins = [];
+
     if (goal) {
         scene.remove(goal);
         disposeObject(goal);
         goal = null;
     }
 }
-
-const star1mat = new THREE.PointsMaterial({ color: 0xffffff })
-const star1 = new THREE.Mesh(new THREE.SphereGeometry(70, 64, 64), star1mat);
-const star2mat = new THREE.PointsMaterial({ color: 0xffffff })
-const star2 = new THREE.Mesh(new THREE.SphereGeometry(70, 64, 64), star2mat);
-const star3mat = new THREE.PointsMaterial({ color: 0xffffff })
-const star3 = new THREE.Mesh(new THREE.SphereGeometry(70, 64, 64), star3mat);
-const star4mat = new THREE.PointsMaterial({ color: 0xffffff })
-const star4 = new THREE.Mesh(new THREE.SphereGeometry(70, 64, 64), star4mat);
-
-
-
 
 function resetPlayer(playerCharacter) {
     playerCharacter.position.set(0, 2, 0);
@@ -175,7 +183,6 @@ function render3D(target) {
 
     //main game update loop
     function animate() {
-
         animationId = requestAnimationFrame(animate);
 
         raycaster.set(playerCharacter.position, down);
@@ -201,7 +208,6 @@ function render3D(target) {
         if (playerCharacter.position.y < -2000) {
             console.log("Level Failed...");
             playerDied();
-
 
             cleanupLevel(scene);
             resetPlayer(playerCharacter);
