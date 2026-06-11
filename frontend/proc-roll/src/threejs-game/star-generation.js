@@ -10,7 +10,7 @@ export function generateStars(radius, widthSegments, heightSegments) {
         positions[i] += (Math.random() - 0.5) * 200;
     }
     
-    const starMaterial = new THREE.PointsMaterial({color: 0xD92E44, size: 3});
+    const starMaterial = new THREE.PointsMaterial({color: 0xffffff, size: 2});
     
     const stars = new THREE.Points(starFieldGeometry, starMaterial);
     return(stars);

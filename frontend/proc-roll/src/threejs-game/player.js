@@ -20,9 +20,8 @@ let playerYaw = 0;
 
 function createPlayerCharacter() {
     const visualSphere = new THREE.Mesh( new THREE.SphereGeometry(ballRadius, 64, 64), testballTextureMaterial );
-
     const physSphere = new THREE.Mesh( new THREE.SphereGeometry(ballRadius, 64, 64), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 }));
-
+    
     physSphere.add(visualSphere);
 
     physSphere.userData.visual = visualSphere;

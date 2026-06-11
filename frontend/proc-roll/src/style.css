@@ -105,6 +105,9 @@ NAV BAR
   background-color: var(--bg);
 }
 .nav-right-side {
+  display: flex;
+  justify-content: space-between;
+  width: 27%;
 }
 
 h1 {

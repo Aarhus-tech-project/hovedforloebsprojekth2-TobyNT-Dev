@@ -22,6 +22,7 @@ testTexture.colorSpace = THREE.SRGBColorSpace
 const platformMaterial = new THREE.MeshStandardMaterial({ map: testTexture })
 
 let playerOnGround = false;
+let lockPlayer = false;
 let animationId;
 
 let platforms = [];
@@ -49,21 +50,50 @@ function disposeObject(obj) {
     }
 }
 
+
+// forward (z+), right (x+),back (z-),left (x-)
+
+let x = 0;
+let z = 0;
+
+let dir = 0;
+
 function generateLevel(scene, playerCharacter) {
     PLATFORM_COUNT = STARTING_PLATFORM_COUNT + currentLevel.value;
     for (let i = 0; i < PLATFORM_COUNT; i++) {
-        const plane = new THREE.Mesh(new THREE.PlaneGeometry(PLATFORM_SIZE, PLATFORM_SIZE), platformMaterial);
+
+        const plane = new THREE.Mesh(
+            new THREE.PlaneGeometry(PLATFORM_SIZE, PLATFORM_SIZE),
+            platformMaterial
+        );
 
         plane.rotation.x = -Math.PI / 2;
-        plane.position.z = i * PLATFORM_SIZE;
+
+        plane.position.set(x, 0, z);
 
         scene.add(plane);
         platforms.push(plane);
+
+        // ---- RANDOM TURN (1/5 chance) ----
+        if (Math.random() < 0.2) {
+            if (Math.random() < 0.5) {
+                dir = (dir + 1) % 4; // turn right
+            } else {
+                dir = (dir + 3) % 4; // turn left
+            }
+        }
+
+        // ---- MOVE FORWARD ----
+        if (dir === 0) z += PLATFORM_SIZE;
+        if (dir === 1) x += PLATFORM_SIZE;
+        if (dir === 2) z -= PLATFORM_SIZE;
+        if (dir === 3) x -= PLATFORM_SIZE;
 
         if (i == PLATFORM_COUNT - 1) {
             goal = generateGoal();
             goal.position.y = plane.position.y + 60;
             goal.position.z = plane.position.z;
+            goal.position.x = plane.position.x;
 
             scene.add(goal);
         } else if (Math.floor(Math.random() * 11) > 8 && i > 2) {
@@ -71,7 +101,7 @@ function generateLevel(scene, playerCharacter) {
             coin.rotation.x = -Math.PI / 2;
             coin.position.x = plane.position.x;
             coin.position.z = plane.position.z;
-            coin.position.y = plane.position.y + 3;
+            coin.position.y = plane.position.y + 2;
 
             scene.add(coin)
             coins.push(coin)
@@ -128,9 +158,32 @@ function render3D(target) {
         2000
     );
 
-    scene.add(generateStars(1500, 64, 64))
-    scene.add(generateStars(1200, 48, 48))
-    scene.add(generateStars(1050, 32, 32))
+    // array of generated star groups
+    let stars = [];
+
+    let genStar = generateStars(1500, 64, 64);
+    scene.add(genStar)
+    stars.push(genStar)
+
+    genStar = generateStars(1200, 48, 48)
+    scene.add(genStar)
+    stars.push(genStar)
+
+    genStar = generateStars(1050, 32, 32)
+    scene.add(genStar)
+    stars.push(genStar)
+
+    genStar = generateStars(350, 32, 32)
+    scene.add(genStar)
+    stars.push(genStar)
+
+    stars.forEach(star => {
+        star.userData.rotationSpeed = {
+            x: (Math.random() - 0.5) * 0.00004,
+            y: (Math.random() - 0.5) * 0.00004,
+            z: (Math.random() - 0.5) * 0.00004
+        };
+    });
 
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -142,9 +195,9 @@ function render3D(target) {
     );
     const bloomPass = new UnrealBloomPass(
         new THREE.Vector2(window.innerWidth, window.innerHeight),
-        30.5, // strength
-        1.4, // radius
-        0.85 // threshold
+        1.2, // strength
+        0.8, // radius
+        0.8 // threshold
     );
     composer.addPass(bloomPass);
     // -
@@ -152,8 +205,8 @@ function render3D(target) {
     target.innerHTML = '';
     target.appendChild(renderer.domElement);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(5, 5, 5);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+    directionalLight.position.set(0, 10, 0);
     scene.add(directionalLight);
 
     const ambientLight = new THREE.AmbientLight(0xffffffff);
@@ -183,6 +236,37 @@ function render3D(target) {
 
     //main game update loop
     function animate() {
+
+        stars.forEach(star => {
+            star.rotation.x += star.userData.rotationSpeed.x;
+            star.rotation.y += star.userData.rotationSpeed.y;
+            star.rotation.z += star.userData.rotationSpeed.z;
+        });
+
+        // animate each coin and check if picked up
+        for (let i = coins.length - 1; i >= 0; i--) {
+            const coin = coins[i];
+
+            coin.rotation.z += 0.01;
+
+
+            // player distance to coins
+            const distancex = Math.abs(playerCharacter.position.x - coin.position.x);
+            const distancez = Math.abs(playerCharacter.position.z - coin.position.z);
+
+            const coinRadius = 2; // coin pickup range
+
+            //------------------------------- COIN PICKED UP-------------------------------
+            if (distancex < coinRadius && distancez < coinRadius) {
+                scene.remove(coin);
+
+                coin.geometry.dispose();
+                coin.material.dispose();
+
+                coins.splice(i, 1);
+            }
+        }
+
         animationId = requestAnimationFrame(animate);
 
         raycaster.set(playerCharacter.position, down);
@@ -190,14 +274,14 @@ function render3D(target) {
 
         const maxGroundDistance = 2;
 
-        if (intersects.length > 0 && intersects[0].distance <= maxGroundDistance) {
+        if (intersects.length > 0 && intersects[0].distance <= maxGroundDistance && lockPlayer == false) {
             playerOnGround = true;
         } else {
             playerOnGround = false;
         }
 
         //basic gravity
-        if (!playerOnGround) {
+        if (!playerOnGround && lockPlayer == false) {
             velocityY -= 0.01;
         } else {
             velocityY = 0;
@@ -205,7 +289,7 @@ function render3D(target) {
 
         playerCharacter.position.y += velocityY;
 
-        if (playerCharacter.position.y < -2000) {
+        if (playerCharacter.position.y < -2000 && lockPlayer == false) {
             console.log("Level Failed...");
             playerDied();
 
@@ -214,7 +298,7 @@ function render3D(target) {
             generateLevel(scene, playerCharacter);
         }
 
-        //Only check x and z distances to the goal
+        //x and z distance to goal
         const distancex = Math.abs(playerCharacter.position.x - goal.position.x);
         const distancez = Math.abs(playerCharacter.position.z - goal.position.z);
 
@@ -222,12 +306,13 @@ function render3D(target) {
 
         if (goal && distancex < goalRadius && distancez < goalRadius) {
             onLevelComplete(scene, playerCharacter);
+            lockPlayer = true;
         }
 
         if (gameState.value == 1) updatePlayerMove(playerCharacter.position, playerCharacter);
         if (gameState.value == 1) updateCamera();
 
-        renderer.render(scene, camera);
+        composer.render();
     }
 
     animate();
@@ -235,6 +320,8 @@ function render3D(target) {
     //cleanup
     return () => {
 
+        lockPlayer = false;
+        
         cancelAnimationFrame(animationId);
 
         cleanupLevel(scene);
