@@ -22,6 +22,7 @@ testTexture.colorSpace = THREE.SRGBColorSpace
 const platformMaterial = new THREE.MeshStandardMaterial({ map: testTexture })
 
 let playerOnGround = false;
+let playerResetPosition;
 let lockPlayer = false;
 let animationId;
 
@@ -50,16 +51,16 @@ function disposeObject(obj) {
     }
 }
 
-
-// forward (z+), right (x+),back (z-),left (x-)
-
-let x = 0;
-let z = 0;
-
-let dir = 0;
-
 function generateLevel(scene, playerCharacter) {
-    PLATFORM_COUNT = STARTING_PLATFORM_COUNT + currentLevel.value;
+    PLATFORM_COUNT = STARTING_PLATFORM_COUNT + currentLevel.value; // level length
+
+    // forward z+, back z-, right x+, left x-
+
+    //making sure every iteration has starting point of 0 x & 0 z
+    let x = 0;
+    let z = 0;
+
+    let dir = 0;
     for (let i = 0; i < PLATFORM_COUNT; i++) {
 
         const plane = new THREE.Mesh(
@@ -69,12 +70,12 @@ function generateLevel(scene, playerCharacter) {
 
         plane.rotation.x = -Math.PI / 2;
 
-        plane.position.set(x, 0, z);
+        console.log(plane.position)
 
+        plane.position.set(x, 0, z);
         scene.add(plane);
         platforms.push(plane);
 
-        // ---- RANDOM TURN (1/5 chance) ----
         if (Math.random() < 0.2) {
             if (Math.random() < 0.5) {
                 dir = (dir + 1) % 4; // turn right
@@ -83,7 +84,6 @@ function generateLevel(scene, playerCharacter) {
             }
         }
 
-        // ---- MOVE FORWARD ----
         if (dir === 0) z += PLATFORM_SIZE;
         if (dir === 1) x += PLATFORM_SIZE;
         if (dir === 2) z -= PLATFORM_SIZE;
@@ -139,7 +139,7 @@ function resetPlayer(playerCharacter) {
 
 function onLevelComplete(scene, playerCharacter) {
     console.log("Level Completed!");
-
+    lockPlayer = true;
     levelCompleted();
 
     cleanupLevel(scene);
@@ -274,14 +274,14 @@ function render3D(target) {
 
         const maxGroundDistance = 2;
 
-        if (intersects.length > 0 && intersects[0].distance <= maxGroundDistance && lockPlayer == false) {
+        if (intersects.length > 0 && intersects[0].distance <= maxGroundDistance) {
             playerOnGround = true;
         } else {
             playerOnGround = false;
         }
 
         //basic gravity
-        if (!playerOnGround && lockPlayer == false) {
+        if (!playerOnGround) {
             velocityY -= 0.01;
         } else {
             velocityY = 0;
@@ -289,7 +289,7 @@ function render3D(target) {
 
         playerCharacter.position.y += velocityY;
 
-        if (playerCharacter.position.y < -2000 && lockPlayer == false) {
+        if (playerCharacter.position.y < -2000) {
             console.log("Level Failed...");
             playerDied();
 
@@ -306,7 +306,6 @@ function render3D(target) {
 
         if (goal && distancex < goalRadius && distancez < goalRadius) {
             onLevelComplete(scene, playerCharacter);
-            lockPlayer = true;
         }
 
         if (gameState.value == 1) updatePlayerMove(playerCharacter.position, playerCharacter);
@@ -321,7 +320,7 @@ function render3D(target) {
     return () => {
 
         lockPlayer = false;
-        
+
         cancelAnimationFrame(animationId);
 
         cleanupLevel(scene);
