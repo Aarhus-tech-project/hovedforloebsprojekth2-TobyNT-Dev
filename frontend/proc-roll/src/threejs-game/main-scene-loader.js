@@ -23,7 +23,6 @@ const platformMaterial = new THREE.MeshStandardMaterial({ map: testTexture })
 
 let playerOnGround = false;
 let playerResetPosition;
-let lockPlayer = false;
 let animationId;
 
 let platforms = [];
@@ -139,7 +138,6 @@ function resetPlayer(playerCharacter) {
 
 function onLevelComplete(scene, playerCharacter) {
     console.log("Level Completed!");
-    lockPlayer = true;
     levelCompleted();
 
     cleanupLevel(scene);
@@ -318,8 +316,6 @@ function render3D(target) {
 
     //cleanup
     return () => {
-
-        lockPlayer = false;
 
         cancelAnimationFrame(animationId);
 
