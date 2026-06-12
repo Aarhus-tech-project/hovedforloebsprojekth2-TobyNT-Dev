@@ -52,9 +52,6 @@ function disposeObject(obj) {
 
 function generateLevel(scene, playerCharacter) {
     PLATFORM_COUNT = STARTING_PLATFORM_COUNT + currentLevel.value; // level length
-
-    // forward z+, back z-, right x+, left x-
-
     //making sure every iteration has starting point of 0 x & 0 z
     let x = 0;
     let z = 0;
@@ -68,13 +65,12 @@ function generateLevel(scene, playerCharacter) {
         );
 
         plane.rotation.x = -Math.PI / 2;
-
-        console.log(plane.position)
-
         plane.position.set(x, 0, z);
+
         scene.add(plane);
         platforms.push(plane);
 
+        // % wraps the direction, to normalize to desired direction
         if (Math.random() < 0.2) {
             if (Math.random() < 0.5) {
                 dir = (dir + 1) % 4; // turn right
@@ -82,12 +78,13 @@ function generateLevel(scene, playerCharacter) {
                 dir = (dir + 3) % 4; // turn left
             }
         }
-
+        //determine direction based off dir:   forward z+ (dir = 0) | back z- (dir = 2) | right x+ (dir = 1) | left x- (dir = 3)
         if (dir === 0) z += PLATFORM_SIZE;
         if (dir === 1) x += PLATFORM_SIZE;
         if (dir === 2) z -= PLATFORM_SIZE;
         if (dir === 3) x -= PLATFORM_SIZE;
 
+        //placing goal on last platform
         if (i == PLATFORM_COUNT - 1) {
             goal = generateGoal();
             goal.position.y = plane.position.y + 60;
@@ -95,6 +92,7 @@ function generateLevel(scene, playerCharacter) {
             goal.position.x = plane.position.x;
 
             scene.add(goal);
+        //random chance to spawn coin on each platorm
         } else if (Math.floor(Math.random() * 11) > 8 && i > 2) {
             const coin = generateCoin();
             coin.rotation.x = -Math.PI / 2;
