@@ -59,12 +59,12 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
-//app.UseCors("FrontendOnly");
-//app.UseAuthentication();
-//app.UseAuthorization();
-//app.MapControllers();
+app.UseCors("FrontendOnly");
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
 
 
 app.Run();
