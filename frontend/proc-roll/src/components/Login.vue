@@ -1,11 +1,10 @@
 <script setup>
 import { ref } from 'vue'
 
-const emit = defineEmits(['toggle-login'])
+const emit = defineEmits(['toggle-login', 'login-success', 'close'])
 
 const isRegister = ref(false)
 
-const email = ref('')
 const username = ref('')
 const password = ref('')
 const passwordConfirm = ref('')
@@ -30,7 +29,6 @@ const handleSubmit = async () => {
 
         const body = isRegister.value
             ? {
-                email: email.value,
                 username: username.value,
                 password: password.value
             }
@@ -47,16 +45,20 @@ const handleSubmit = async () => {
             body: JSON.stringify(body)
         })
 
+        if (!response.ok) {
+            const errorText = await response.text()
+            throw new Error(errorText || 'Request failed')
+        }
+
         const data = await response.json()
 
-        if (!response.ok) {
-            throw new Error(data.message || 'Request failed')
-        }
-
         if (!isRegister.value) {
-            localStorage.setItem('token', data.token)
+            if (data.userId) {
+                sessionStorage.setItem('token', data.userId)
+                emit('login-success')
+                window.location.reload();
+            }
         }
-
         emit('close')
 
     } catch (err) {
@@ -65,6 +67,7 @@ const handleSubmit = async () => {
         loading.value = false
     }
 }
+
 
 const toggleMode = () => {
     error.value = null
@@ -78,12 +81,6 @@ const toggleMode = () => {
             <h2 class="login-title">
                 {{ isRegister ? 'Register' : 'Log in' }}
             </h2>
-
-            <!-- Email (only for register) -->
-            <div v-if="isRegister" class="form-group">
-                <label class="form-label">Email</label>
-                <input v-model="email" type="email" class="form-input" required />
-            </div>
 
             <!-- Username -->
             <div class="form-group">
@@ -104,7 +101,7 @@ const toggleMode = () => {
             </div>
 
             <p v-if="error" class="form-error">{{ error }}</p>
-            
+        
             <button class="login-button" :disabled="loading">{{ loading ? (isRegister ? 'Registering...' : 'Logging in...') : (isRegister ? 'Register' : 'Log in') }}</button>
             
             <div class="alt-login-choices">

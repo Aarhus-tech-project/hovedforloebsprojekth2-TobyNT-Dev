@@ -21,16 +21,14 @@ builder.Services.AddCors(options =>
     options.AddPolicy("FrontendOnly", policy =>
     {
         policy
-            .WithOrigins("http://www.gr08.prog.skylab.academy")
+            .WithOrigins("http://www.gr08.prog.skylab.academy", "http://localhost:5173", "http://localhost:3000")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
 });
 // Configure EF Core DbContext
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-                       ?? "Server=(localdb)\\mssqllocaldb;Database=ProcRollDb;Trusted_Connection=True;MultipleActiveResultSets=true";
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString));
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
 var app = builder.Build();
 

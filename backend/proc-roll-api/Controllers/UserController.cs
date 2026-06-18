@@ -1,8 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using proc_roll_api.DTOs;
+using proc_roll_api.Data;
 using proc_roll_api.Models;
 using proc_roll_api.Services;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace proc_roll_api.Controllers
 {
@@ -10,113 +15,130 @@ namespace proc_roll_api.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        private readonly AppDbContext _db;
+
+        public UserController(AppDbContext db)
+        {
+            _db = db;
+        }
+
         [HttpGet]
-        public ActionResult<List<User>> GetAll() => UserService.GetAll();
+        public async Task<ActionResult<List<User>>> GetAll()
+        {
+            var users = await _db.Users
+                .Include(u => u.Cosmetics)
+                .ToListAsync();
+            return Ok(users);
+        }
 
         [HttpGet("{id}")]
-        public ActionResult<User> Get(Guid id)
+        public async Task<ActionResult<User>> Get(Guid id)
         {
-            var user = UserService.Get(id);
+            var user = await _db.Users
+                .Include(u => u.Cosmetics)
+                .FirstOrDefaultAsync(u => u.UserId == id);
+
             if (user == null)
                 return NotFound();
-            return user;
+            return Ok(user);
         }
 
         [HttpPost]
-        public IActionResult Create(CreateUserDto dto)
+        public async Task<IActionResult> Create(CreateUserDto dto)
         {
-            if (dto == null ||
-                string.IsNullOrWhiteSpace(dto.Username) ||
-                string.IsNullOrWhiteSpace(dto.Email) ||
-                string.IsNullOrWhiteSpace(dto.Password))
+            if (dto == null || string.IsNullOrWhiteSpace(dto.Password))
             {
                 return BadRequest("Missing required fields");
             }
 
-            if (UserService.EmailExists(dto.Email))
-                return Conflict("Email already in use");
-
-            if (UserService.UsernameExists(dto.Username))
+            if (await _db.Users.AnyAsync(u => u.Username == dto.Username))
                 return Conflict("Username already in use");
 
             var newUser = new User
             {
                 UserId = Guid.NewGuid(),
                 Username = dto.Username,
-                Email = dto.Email,
-                PasswordHash = UserService.HashPassword(dto.Password),
+                PasswordHash = dto.Password,
                 Balance = 0,
                 Highscore = 0
             };
 
-            var added = UserService.Add(newUser);
-            if (!added)
-                return Conflict("Email or username already in use");
+            _db.Users.Add(newUser);
+            await _db.SaveChangesAsync();
 
             return CreatedAtAction(nameof(Get), new { id = newUser.UserId }, newUser);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var user = UserService.Get(id);
+            var user = await _db.Users.FindAsync(id);
 
             if (user == null)
                 return NotFound();
-            UserService.Delete(id);
+
+            _db.Users.Remove(user);
+            await _db.SaveChangesAsync();
 
             return NoContent();
         }
 
         [HttpPost("login")]
-        public IActionResult Login(LoginDto dto)
+        public async Task<IActionResult> Login(LoginDto dto)
         {
-            var user = UserService.Login(dto.Email, dto.Password);
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Username == dto.Username && u.PasswordHash == dto.Password);
 
             if (user == null)
-                return Unauthorized("Invalid email or password");
+                return Unauthorized("Invalid username or password");
 
             return Ok(new
             {
                 user.UserId,
                 user.Username,
-                user.Email,
                 user.Balance,
                 user.Highscore
             });
         }
 
         [HttpPost("{id}/balance/add")]
-        public IActionResult AddBalance(Guid id, BalanceDto dto)
+        public async Task<IActionResult> AddBalance(Guid id, BalanceDto dto)
         {
-            var success = UserService.AddBalance(id, dto.Amount);
+            var user = await _db.Users.FindAsync(id);
+            if (user == null) return NotFound();
 
-            if (!success)
-                return NotFound();
-
+            user.Balance += dto.Amount;
+            await _db.SaveChangesAsync();
             return Ok();
         }
 
         [HttpPost("{id}/balance/remove")]
-        public IActionResult RemoveBalance(Guid id, BalanceDto dto)
+        public async Task<IActionResult> RemoveBalance(Guid id, BalanceDto dto)
         {
-            var success = UserService.RemoveBalance(id, dto.Amount);
+            var user = await _db.Users.FindAsync(id);
+            if (user == null) return BadRequest("User not found");
 
-            if (!success)
-                return BadRequest("Not enough balance or user not found");
+            if (user.Balance < dto.Amount)
+                return BadRequest("Not enough balance");
 
+            user.Balance -= dto.Amount;
+            await _db.SaveChangesAsync();
             return Ok();
         }
 
         [HttpPost("{id}/highscore")]
-        public IActionResult UpdateHighscore(Guid id, HighscoreDto dto)
+        public async Task<IActionResult> UpdateHighscore(Guid id, HighscoreDto dto)
         {
-            var success = UserService.UpdateHighscore(id, dto.Score);
+            var user = await _db.Users.FindAsync(id);
+            if (user == null) return BadRequest("User not found");
 
-            if (!success)
-                return BadRequest("User not found or score not high enough");
+            if (dto.Score > user.Highscore)
+            {
+                user.Highscore = dto.Score;
+                await _db.SaveChangesAsync();
+                return Ok();
+            }
 
-            return Ok();
+            return BadRequest("Score not high enough");
         }
     }
 }

@@ -238,6 +238,9 @@ h1 {
 .login-button {
   width: 100%;
 }
+.nextButton:disabled {
+ opacity: 70%;
+}
 
 .login-button:active {
   transform: scale(0.98);

@@ -49,6 +49,43 @@ function disposeObject(obj) {
         }
     }
 }
+async function updateUser(mode, amount) {
+    let endpoint;
+    let body;
+    let userId = sessionStorage.getItem("token");
+
+    if (mode == "highscore") {
+        endpoint = `http://localhost:5263/api/User/${userId}/highscore`;
+        body = { "score": amount }
+    }
+
+    if (mode == "balance") {
+        endpoint = `http://localhost:5263/api/User/${userId}/balance/add`;
+        body = { "amount": amount }
+    }
+
+    const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+    })
+    return(response);
+}
+
+async function getHighScore() {
+    let userId = sessionStorage.getItem("token");
+    let endpoint = `http://localhost:5263/api/User/${userId}`;
+
+    const response = await fetch(endpoint, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
+
 
 function generateLevel(scene, playerCharacter) {
     PLATFORM_COUNT = STARTING_PLATFORM_COUNT + currentLevel.value; // level length
@@ -260,6 +297,8 @@ function render3D(target) {
                 coin.material.dispose();
 
                 coins.splice(i, 1);
+
+                updateUser("balance", 1)
             }
         }
 
@@ -301,6 +340,8 @@ function render3D(target) {
         const goalRadius = 2; // tweak this to match pillar width
 
         if (goal && distancex < goalRadius && distancez < goalRadius) {
+            getHighScore();
+            // updateUser("highscore", )
             onLevelComplete(scene, playerCharacter);
         }
 

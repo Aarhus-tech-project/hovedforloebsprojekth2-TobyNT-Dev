@@ -1,7 +1,13 @@
 <script setup>
+import { materialOpacity } from 'three/src/nodes/accessors/MaterialNode.js';
 import { currentLevel, gameState, newGame } from '../threejs-game/game-states.js';
 import StartLevel from './GameContainer.vue'
 
+let loggedIn = false;
+
+if (sessionStorage.getItem('token') != null) {
+    loggedIn = true;
+}
 </script>
 
 <template>
@@ -23,7 +29,8 @@ import StartLevel from './GameContainer.vue'
             <!-- Start Screen -->
             <div v-else-if="gameState === 3">
                 <h2><span class="secondary">$</span> welcome to the <span class="primary">void_</span></h2>
-                <button class="nextButton" @click="StartLevel; gameState = 1">start game</button>
+                <button v-if="loggedIn" class="nextButton" @click="StartLevel; gameState = 1">start game</button>
+                <h2 v-else ><span class="secondary">$ </span>login or register to play</h2>
             </div>
         </div>
         <div v-else class="score-counter-box">
