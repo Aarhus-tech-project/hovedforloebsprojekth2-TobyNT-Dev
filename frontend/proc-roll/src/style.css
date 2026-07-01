@@ -1,0 +1,275 @@
+html, body, #app {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    font-family: consolas;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    font-weight: 100;
+    overflow: hidden;
+}
+
+#main-container {
+  
+}
+#game-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+h2 {
+  font-size: 1.8em;
+}
+
+#threejs-canvas {
+    width: 100%;
+    height: 100%;
+}
+
+.fullscreen-cover {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.308);
+  width: 100%;
+  height: 100%;
+
+  color: white;
+  justify-content: center;
+  padding: 300px;
+  backdrop-filter: blur(12px);
+}
+.score-counter-box {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+}
+
+.score-counter {
+  font-size: 2rem;
+  width: 100%;
+  text-align: center;
+}
+.fullscreen-cover.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+}
+
+.primary {
+  color: var(--accent);
+  text-shadow: var(--accent) 0px 0px 15px;
+}
+.secondary {
+  color: var(--secondary-accent);
+  text-shadow: var(--secondary-accent) 0px 0px 15px;
+}
+.blink {
+  animation: blink 1s infinite linear;
+}
+
+@keyframes blink {
+  0% {opacity: 100%;}
+  49.9% {opacity: 100%;}
+  50% {opacity: 0%;}
+  100% {opacity: 0%;}
+}
+/* =====================
+NAV BAR
+====================== */
+.navbar {
+  z-index: 200;
+  justify-content: space-between;
+  padding: 0 12rem 0 12rem;
+  display: flex;
+  align-items: center;
+  background-color: var(--bg);
+}
+.nav-right-side {
+  display: flex;
+  justify-content: space-between;
+  width: 27%;
+}
+
+h1 {
+    font-size: 2.5rem;
+    color: var(--accent);
+    margin: 0;
+    padding: 0;
+}
+
+/* =========================
+   THEME VARIABLES
+========================= */
+:root {
+  --bg: #15162A;
+  --panel: #0B0B15;
+
+  --text: #e6e6e6;
+  --muted: #a0a0a0;
+
+  --accent: #7074E0;
+  --accent-hover: #5457A8;
+
+  --secondary-accent: #D92E44;
+  --secondary-accent-hover: #A32333;
+
+  --border: #9497E8;
+  --error: #A32333;
+
+  --shadow: 0 0 30px #7074e0d6;
+}
+/* =========================
+   LOGIN MODAL
+========================= */
+.login-container {
+  z-index: 100;
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+}
+
+.login-card {
+  background: var(--panel);
+  padding: 2rem;
+  border-radius: 12px;
+
+  width: 350px;
+
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.login-title {
+  margin-bottom: 1.5rem;
+  text-align: center;
+
+  color: var(--text);
+}
+
+/* =========================
+   FORM
+========================= */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  width: 100%;
+  display: block;
+  margin-bottom: 0.4rem;
+
+  font-size: 1.2rem;
+  color: var(--muted);
+}
+
+.alt-login-choices {
+  display: flex;
+  justify-content: space-around;
+}
+
+.login-cancel, .login-register {
+    background-color: transparent;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--muted);
+    text-align: center;
+    cursor: pointer;
+    border-color: var(--muted);
+}
+
+.form-input {
+  width: 94%;
+  padding: 0.6rem;
+
+  border: 1px solid var(--border);
+
+  background: var(--panel-2);
+  color: var(--text);
+
+  font-size: 1.2rem;
+
+  transition: border 0.2s, background 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--bg);
+}
+
+/* =========================
+   ERROR
+========================= */
+.form-error {
+  color: var(--error);
+  font-size: 0.85rem;
+  margin-bottom: 0.8rem;
+}
+
+/* =========================
+   BUTTON
+========================= */
+.login-button {
+  width: 100%;
+}
+.nextButton:disabled {
+ opacity: 70%;
+}
+
+.login-button:active {
+  transform: scale(0.98);
+}
+
+.login-button:disabled {
+  background: #3b3f4a;
+  cursor: not-allowed;
+}
+
+
+button {
+  font-family: consolas;
+  font-size: 1rem;
+  width: 180px;
+  padding: 0.7rem;
+
+  background: transparent;
+  color: var(--accent);
+  margin: 20px 0 20px 0;
+  border: solid var(--accent) 1px;
+
+  cursor: pointer;
+  box-shadow: var(--accent) 0px 0px 0px;
+  transition: 400ms;
+  &:hover {
+    box-shadow: var(--shadow);
+    text-shadow: var(--accent) 0px 0px 10px;
+    color: white;
+    border-color: white;
+  }
+}
