@@ -8,6 +8,12 @@ let loggedIn = false;
 if (sessionStorage.getItem('token') != null) {
     loggedIn = true;
 }
+function getHighscore() {
+    return parseInt(sessionStorage.getItem("highscore"), 10)
+}
+function getBalance() {
+    return parseInt(sessionStorage.getItem("balance"), 10)
+}
 </script>
 
 <template>
@@ -16,25 +22,31 @@ if (sessionStorage.getItem('token') != null) {
 
             <!-- Game Over -->
             <div v-if="gameState === 0">
-                <h2>you <span class="blink secondary">failed</span><br>you completed {{ currentLevel - 1 }} levels!</h2>
-                <button class="nextButton" @click="newGame">return to menu</button>
+                <h2>user<span class="blink secondary">Failed</span>OnLevel({{ currentLevel }}) {</h2>
+                <h2><blockquote>user_highscore = {{ getHighscore() }};</blockquote></h2>
+                <h2><blockquote>user_balance = {{ getBalance() }};</blockquote></h2>
+                <h2>};</h2>
+                <button class="nextButton" @click="newGame">returnToMenu();</button>
             </div>
 
             <!-- Level Complete -->
             <div v-else-if="gameState === 2">
-                <h2>Level {{ currentLevel - 1 }} Completed!</h2>
-                <button class="nextButton" @click="StartLevel; gameState = 1">next level</button>
+                <h2>level<span class="primary">Completed</span>({{ currentLevel - 1 }}) {</h2>
+                <h2><blockquote>user_highscore = {{ getHighscore() }};</blockquote></h2>
+                <h2><blockquote>user_balance = {{ getBalance() }};</blockquote></h2>
+                <h2>};</h2>
+                <button class="nextButton" @click="StartLevel; gameState = 1">goNextLevel();</button>
             </div>
 
             <!-- Start Screen -->
             <div v-else-if="gameState === 3">
                 <h2><span class="secondary">$</span> welcome to the <span class="primary">void_</span></h2>
-                <button v-if="loggedIn" class="nextButton" @click="StartLevel; gameState = 1">start game</button>
-                <h2 v-else ><span class="secondary">$ </span>login or register to play</h2>
+                <button v-if="loggedIn" class="nextButton" @click="StartLevel; gameState = 1">startGame()</button>
+                <h2 v-else ><span class="secondary">$ </span>login_or_register_to_play</h2>
             </div>
         </div>
         <div v-else class="score-counter-box">
-            <h3 class="score-counter primary">level {{ currentLevel }}</h3>
+            <h3 class="score-counter primary">level_{{ currentLevel }}</h3>
         </div>
     </transition>
 </template>

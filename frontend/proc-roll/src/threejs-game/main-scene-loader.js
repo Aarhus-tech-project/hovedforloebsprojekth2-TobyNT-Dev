@@ -54,36 +54,35 @@ async function updateUser(mode, amount) {
     let body;
     let userId = sessionStorage.getItem("token");
 
-    if (mode == "highscore") {
-        endpoint = `http://localhost:5263/api/User/${userId}/highscore`;
-        body = { "score": amount }
-    }
-
-    if (mode == "balance") {
-        endpoint = `http://localhost:5263/api/User/${userId}/balance/add`;
-        body = { "amount": amount }
-    }
-
-    const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-    })
-    return(response);
-}
-
-async function getHighScore() {
-    let userId = sessionStorage.getItem("token");
-    let endpoint = `http://localhost:5263/api/User/${userId}`;
-
-    const response = await fetch(endpoint, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
+    if (userId != "test") {
+        if (mode == "highscore") {
+            endpoint = `http://localhost:5263/api/User/${userId}/highscore`;
+            body = { "score": amount }
         }
-    })
+    
+        if (mode == "balance") {
+            endpoint = `http://localhost:5263/api/User/${userId}/balance/add`;
+            body = { "amount": amount }
+        }
+        
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        })
+        return(response);
+    }
+    else {
+        if (mode == "highscore" && parseInt(sessionStorage.getItem("highscore")) < amount) {
+            sessionStorage.setItem("highscore", amount);
+        }
+    
+        if (mode == "balance") {
+            sessionStorage.setItem("balance", parseInt(sessionStorage.getItem("balance"), 10) + amount);
+        }
+    }
 }
 
 
@@ -212,9 +211,9 @@ function render3D(target) {
 
     stars.forEach(star => {
         star.userData.rotationSpeed = {
-            x: (Math.random() - 0.5) * 0.00004,
-            y: (Math.random() - 0.5) * 0.00004,
-            z: (Math.random() - 0.5) * 0.00004
+            x: (Math.random() - 0.5) * 0.0004,
+            y: (Math.random() - 0.5) * 0.0004,
+            z: (Math.random() - 0.5) * 0.0004
         };
     });
 
@@ -261,7 +260,7 @@ function render3D(target) {
 
         const targetPos = playerCharacter.position.clone().add(offset);
 
-        camera.position.lerp(targetPos, 0.05);
+        camera.position.lerp(targetPos, 0.08);
         camera.lookAt(playerCharacter.position);
     }
 
@@ -317,7 +316,7 @@ function render3D(target) {
 
         //basic gravity
         if (!playerOnGround) {
-            velocityY -= 0.01;
+            velocityY -= 0.1;
         } else {
             velocityY = 0;
         }
@@ -340,8 +339,7 @@ function render3D(target) {
         const goalRadius = 2; // tweak this to match pillar width
 
         if (goal && distancex < goalRadius && distancez < goalRadius) {
-            getHighScore();
-            // updateUser("highscore", )
+            updateUser("highscore", currentLevel.value);
             onLevelComplete(scene, playerCharacter);
         }
 

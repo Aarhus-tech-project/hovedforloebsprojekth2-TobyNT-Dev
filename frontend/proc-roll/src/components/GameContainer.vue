@@ -16,6 +16,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <LevelTransition></LevelTransition>
-  <div ref="target"></div>
+  <div> 
+    <LevelTransition></LevelTransition>
+    <div ref="target"></div>
+  </div>
 </template>

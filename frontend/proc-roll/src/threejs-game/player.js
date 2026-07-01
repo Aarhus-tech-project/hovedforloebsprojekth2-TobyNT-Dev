@@ -17,6 +17,8 @@ const ballRadius = 2;
 let velocity = new THREE.Vector3();
 let playerYaw = 0;
 
+const timer = new THREE.Timer();
+const delta = timer.getDelta();
 
 function createPlayerCharacter() {
     const visualSphere = new THREE.Mesh( new THREE.SphereGeometry(ballRadius, 64, 64), testballTextureMaterial );
@@ -31,19 +33,19 @@ function createPlayerCharacter() {
 
 function updatePlayerMove(playerPosition, playerMesh) {
     //Rotate ball
-    if (userInputState.a) playerYaw += 0.015;
-    if (userInputState.d) playerYaw -= 0.015;
+    if (userInputState.a) playerYaw += 0.06;
+    if (userInputState.d) playerYaw -= 0.06;
 
     playerMesh.rotation.y = playerYaw;
     const forward = new THREE.Vector3(0, 0, -1);
     forward.applyAxisAngle(new THREE.Vector3(0, 1, 0), playerYaw);
     //Throttle / reverse
     let inputStrength = 0;
-    if (userInputState.w) inputStrength -= 1;
-    if (userInputState.s) inputStrength += 1;
+    if (userInputState.w) inputStrength -= 3;
+    if (userInputState.s) inputStrength += 3;
 
-    const targetVelocity = forward.multiplyScalar(inputStrength * 0.1);
-    velocity.lerp(targetVelocity, 0.01);
+    const targetVelocity = forward.multiplyScalar(inputStrength * 0.12);
+    velocity.lerp(targetVelocity, 0.08);
     const deltaMove = velocity.clone();
     playerPosition.add(deltaMove);
     const visualSphere = playerMesh.userData.visual;
