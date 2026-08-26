@@ -8,6 +8,11 @@ let loggedIn = false;
 if (sessionStorage.getItem('token') != null) {
     loggedIn = true;
 }
+else {
+    sessionStorage.setItem('token', "test")
+    sessionStorage.setItem('highscore', 0)
+    sessionStorage.setItem('balance', 0)
+}
 function getHighscore() {
     return parseInt(sessionStorage.getItem("highscore"), 10)
 }
